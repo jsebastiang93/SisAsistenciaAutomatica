@@ -112,10 +112,13 @@ if __name__ == '__main__':
 """
 import json
 from src.barcode.colombian_pdf417_decoder import ColombianIdCardPdf417Decoder
+from controllers.asistencia import *
+from datetime import datetime
 
-COLOMBIAN_CEDULA_PDF417_TRUNKED_LEN = 200
-PUB_SDK_MARK = bytes('PubDSK_', 'ascii')
-NULL_BYTE = bytes('\x00', 'ascii')
+# COLOMBIAN_CEDULA_PDF417_TRUNKED_LEN = 200
+# PUB_SDK_MARK = bytes('PubDSK_', 'ascii')
+# NULL_BYTE = bytes('\x00', 'ascii')
+
 
 def barcode_input():
     print("Escanea el código con la pistola...")
@@ -124,26 +127,46 @@ def barcode_input():
         scanned_bytes = scanned_input.encode('utf-8')
         print(f"Lectura bruta: {scanned_bytes}")
 
-        pub_sdk_mark_idx = scanned_bytes.find(PUB_SDK_MARK)
-        if pub_sdk_mark_idx == -1:
-            print("No se encontró la marca PubDSK_. Intentando de nuevo...")
-            continue
+        try:
+            decoded_str = scanned_bytes.decode('utf-8')
+            fields = decoded_str.split('\t')
 
-        if scanned_bytes[pub_sdk_mark_idx - 10:pub_sdk_mark_idx].count(NULL_BYTE) > 4:
-            frame = scanned_bytes[pub_sdk_mark_idx - 24:]
-        else:
-            frame = scanned_bytes[pub_sdk_mark_idx - 13:]
+            if len(fields) < 8:
+                print("⚠️ Datos incompletos. Intenta escanear de nuevo.\n")
+                continue
 
-        if len(frame) < 200:
-            print("Datos incompletos. Escanea de nuevo.")
-            continue
+            # Asignar campos
+            cedula = fields[0]
+            primer_nombre = fields[3]
+            segundo_nombre = fields[4]
+            primer_apellido = fields[1]
+            segundo_apellido = fields[2]
+            genero = fields[5]
+            fecha_nacimiento = fields[6]
+            rh = fields[7]
+            
+            # Obtener fecha y hora actual
+            now = datetime.now()
 
-        decoder = ColombianIdCardPdf417Decoder(frame)
-        data = decoder.decode()
-        result = json.dumps(data, indent=2, default=lambda o: o.__dict__)
-        print("Resultado decodificado:")
-        print(result)
+            # Separar la fecha y la hora
+            fecha_actual = '2025-04-16'  
+            # fecha_actual = now.strftime('%Y-%m-%d')  
+            hora_actual = now.strftime('%H:%M:%S')
+            
+            # Imprimir datos separados
+            print("✅ Datos separados:")
+            print(f"Cédula: {cedula}")
+            print(f"Nombre: {primer_nombre} {segundo_nombre}, {primer_apellido} {segundo_apellido}")
+            print(f"Género: {genero}")
+            print(f"Fecha Nacimiento: {fecha_nacimiento}")
+            print(f"RH: {rh}")
+            print("-" * 40)
+            
+            print("✅ Insertando en base de datos...")
+            insert_asistencia(cedula,fecha_actual,hora_actual )
+        
+        except Exception as e:
+            print(f"❌ Error general: {e}")
 
 if __name__ == '__main__':
     barcode_input()
-
