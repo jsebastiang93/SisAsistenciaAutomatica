@@ -6,13 +6,13 @@ def validar_estudiante(cedula):
         conn = get_connection()
         cursor = conn.cursor()
 
-        query = "SELECT * FROM asistencia.usuarios u WHERE u.cedula = %s"
+        query = "SELECT * FROM asistencia.estudiantes e WHERE e.num_identificacion = %s"
         cursor.execute(query, (cedula,))
         row = cursor.fetchone()
 
         if row:
-            id_estudiante = row[0]
-            return id_estudiante
+            cod_estudiante = row[0]
+            return cod_estudiante
         else:
             print("No se encontraron registros con la cédula proporcionada.")
             return None
@@ -24,42 +24,41 @@ def validar_estudiante(cedula):
             cursor.close()
         if conn:
             conn.close()
-
             
-            
-            
-def validar_clase(fecha):
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
+def validar_estado_asistencia(hora_asistencia):
 
-        query = "SELECT * FROM asistencia.clases c WHERE fecha = %s"
-        cursor.execute(query, (fecha,))
-        row = cursor.fetchone()
 
-        if row:
-            id_clase = row[0]
-            return id_clase
-        else:
-            print("No se encontraron registros con la fecha proporcionada.")
-            return None
-    except Exception as e:
-        print(f"❌ Error al consultar en la base de datos: {e}")
-        return None
-    finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
- 
+    # Hora fija (hora de inicio de clase)
+    hora_clase = hora_asistencia.replace(hour=18, minute=30, second=0, microsecond=0)
+
+    # Calcular la diferencia en minutos
+    diferencia_minutos = (hora_asistencia - hora_clase).total_seconds() / 60
+
+    # Inicializar valores
+    estado = None
+    estado_id = None
+
+    # Validar antes de iniciar la clase
+    if 0 <= diferencia_minutos <= 15:
+        #ASISITIO
+        estado_id = 1
+    elif 16 <= diferencia_minutos <= 30:
+        #RETRASO
+        estado_id = 2
+    else:
+        #INASISTENCIA
+        estado_id = 3
+
+    # También podrías retornarlo si quieres usarlo después
+    return estado_id
 
 
 def insert_asistencia(cedula, fecha_actual, hora_actual):
     try:
-        id_estudiante = validar_estudiante(cedula)
-        id_clase = validar_clase(fecha_actual)
-
-        if id_estudiante is None or id_clase is None:
+        cod_estudiante = validar_estudiante(cedula)
+        estado_asistencia = validar_estado_asistencia(hora_actual)
+        
+        if cod_estudiante is None :
             print("❌ No se pudo obtener id_estudiante o id_clase.")
             return
 
@@ -68,11 +67,11 @@ def insert_asistencia(cedula, fecha_actual, hora_actual):
 
         query = """
         INSERT INTO asistencia.asistencia (
-            id_estudiante, id_clase, fecha_asistencia, hora_asistencia, estado
+            cod_estudiante, id_asig_periodo, fecha_asistencia, hora_asistencia, id_estado_asis
         ) VALUES (%s, %s, %s, %s, %s)
         """
         cursor.execute(query, (
-            id_estudiante, id_clase, fecha_actual, hora_actual, 1
+            cod_estudiante, 7, fecha_actual, hora_actual, estado_asistencia
         ))
 
         conn.commit()
@@ -87,5 +86,5 @@ def insert_asistencia(cedula, fecha_actual, hora_actual):
             
             
 # if __name__ == '__main__':
-#    insert_asistencia("1234567890", "2025-04-1", "08:00:00")
+#    validar_estudiante("1144106768")
 
