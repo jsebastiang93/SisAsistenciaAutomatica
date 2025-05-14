@@ -1,57 +1,43 @@
-from src.barcode.colombian_pdf417_decoder import ColombianIdCardPdf417Decoder
-from controllers.asistencia import *
+
+from fastapi import FastAPI
+from pydantic import BaseModel
 from datetime import datetime
+from fastapi.middleware.cors import CORSMiddleware
+from controllers.asistencia import insert_asistencia
 
-def barcode_input():
-    print("Escanea el código con la pistola...")
-    while True:
-        scanned_input = input()  # La pistola escribe aquí como si fuera el teclado
-        scanned_bytes = scanned_input.encode('utf-8')
+app = FastAPI()
 
-        try:
-            decoded_str = scanned_bytes.decode('utf-8')
-            
-            # Detectar si es PDF417 (esperamos que tenga tabulaciones)
-            if '\t' in decoded_str:
-                fields = decoded_str.split('\t')
+# Permitir acceso desde tu frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Puedes cambiar "*" por tu dominio en producción
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-                if len(fields) < 8:
-                    print("-" * 40)
-                    print("⚠️ Datos PDF417 incompletos. Intenta escanear de nuevo.\n")
-                    print("-" * 40)
-                    continue
+# Modelo de entrada
+class CodigoInput(BaseModel):
+    codigo: str
 
-                # Asignar campos
-                cedula = fields[0]
+@app.post("/iniciar-escaner")
+def iniciar_escaner(data: CodigoInput):
+    codigo = data.codigo.strip()
 
-                # Obtener fecha y hora actual
-                now = datetime.now()
-                fecha_actual = now.date()
-                print("-" * 40)
-                print("✅ Documento (PDF417) detectado. Insertando en base de datos...")
-                insert_asistencia(cedula, fecha_actual, now)
-                print("-" * 40)
-                
-            else:
-                # Si no tiene tabuladores, asumimos que es un Code128 o similar
-                code_data = decoded_str.strip()
+    if not codigo:
+        return {"error": "⚠️ Código vacío. Intenta escanear de nuevo."}
 
-                if code_data == "":
-                    print("-" * 40)
-                    print("⚠️ Código vacío. Intenta escanear de nuevo.\n")
-                    print("-" * 40)
-                    continue
+    try:
+        now = datetime.now()
+        fecha_actual = now.date()
 
-                now = datetime.now()
-                fecha_actual = now.date()
+        # Insertar en la base de datos
+        insert_asistencia(codigo, fecha_actual, now)
 
-                print("-" * 40)
-                print(f"✅ Código simple detectado: {code_data}")
-                insert_asistencia(code_data, fecha_actual, now)
-                print("-" * 40)            
-        except Exception as e:
-            print(f"❌ Error general: {e}")
+        return {
+            "status": "ok",
+            "mensaje": f"✅ Código recibido ({codigo}). Asistencia registrada."
+        }
 
-
-if __name__ == '__main__':
-    barcode_input()
+    except Exception as e:
+        return {"error": f"❌ Error al registrar asistencia: {str(e)}"}
