@@ -5,8 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Consulta de Asistencia</title>
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    .scan-btn {
+      background-color: #009688;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    .scan-btn:hover {
+      background-color: #00796b;
+    }
+    .scan-btn.stop {
+      background-color: #b71c1c;
+    }
+    .scan-btn.stop:hover {
+      background-color: #8e0000;
+    }
+    #respuestaEscaneo {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    #modalConfirmacion {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    #modalConfirmacion .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      max-width: 400px;
+    }
+    #codigoEscanerModal {
+      padding: 10px;
+      width: 90%;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
+  <!-- Modal -->
+  <div id="modalConfirmacion">
+    <div class="modal-content">
+      <p>Escanee el código y confirme el envío</p>
+      <form onsubmit="event.preventDefault(); confirmarEnvioDesdeModal();">
+        <input type="text" id="codigoEscanerModal" placeholder="Escanea aquí..." autocomplete="off" />
+        <div style="margin-top: 20px;">
+          <button type="submit" class="scan-btn">Aceptar</button>
+          <button type="button" onclick="cerrarModal()" class="scan-btn stop">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Encabezado -->
   <header class="header-banner">
     <div class="banner">
@@ -19,9 +81,8 @@
     </div>
   </header>
 
-  <!-- Contenedor general -->
+  <!-- Contenido principal -->
   <div class="dashboard">
-    <!-- Menú lateral -->
     <nav class="sidebar">
       <h3>Menú</h3>
       <ul>
@@ -37,24 +98,24 @@
       </ul>
     </nav>
 
-    <!-- Contenido principal -->
     <main class="content">
       <h2>Consulta de asistencia a clases</h2>
+
+      <!-- Botón de escáner -->
+      <div style="margin-top: 20px;">
+        <button onclick="mostrarModalConfirmacion()" class="scan-btn">🟢 Escanear documento</button>
+        <p id="respuestaEscaneo"></p>
+      </div>
+
+      <!-- Filtros -->
       <div class="filters">
-        <label>
-          Período académico
-          <select>
-            <option>2025-1 Primer semestre</option>
-          </select>
+        <label>Período académico
+          <select><option>2025-1 Primer semestre</option></select>
         </label>
-        <label>
-          Asignatura
-          <select>
-            <option>Electiva de Profundización III</option>
-          </select>
+        <label>Asignatura
+          <select><option>Electiva de Profundización III</option></select>
         </label>
-        <label>
-          Fecha de clase
+        <label>Fecha de clase
           <input type="date" value="2025-04-29" />
         </label>
         <button class="search-btn">🔍</button>
@@ -87,14 +148,58 @@
             <td>06:35 pm - Asistió</td>
             <td><a href="#">Adicionar excusa</a></td>
           </tr>
-          <!-- Repite con más filas según necesites -->
         </tbody>
       </table>
     </main>
   </div>
 
   <footer>
-    <p>Copyright © 2025 - Unicatólica | Versión 0.0.1 | Todos los derechos reservados</p>
+    <p>Copyright © 2025 - Unicatólica | Versión 0.0.1</p>
   </footer>
+
+  <!-- Script -->
+  <script>
+    function mostrarModalConfirmacion() {
+      document.getElementById("modalConfirmacion").style.display = "flex";
+      const input = document.getElementById("codigoEscanerModal");
+      input.value = "";
+      input.focus();
+    }
+
+    function cerrarModal() {
+      document.getElementById("modalConfirmacion").style.display = "none";
+      document.getElementById("codigoEscanerModal").value = "";
+    }
+
+    function confirmarEnvioDesdeModal() {
+      const codigo = document.getElementById("codigoEscanerModal").value.trim();
+
+      if (codigo === "") {
+        alert("⚠️ Por favor escanee o ingrese un código.");
+        return;
+      }
+
+      console.log(codigo);
+      
+
+      cerrarModal(); // Asumiendo que esto cierra tu modal
+    }
+
+
+    // ⚠️ Prevenir Enter global para que no recargue la página
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        const modal = document.getElementById("modalConfirmacion");
+        const input = document.getElementById("codigoEscanerModal");
+        if (modal.style.display === "flex" && document.activeElement !== input) {
+          event.preventDefault();
+        }
+        // También prevenimos por seguridad en cualquier parte
+        if (modal.style.display !== "flex") {
+          event.preventDefault();
+        }
+      }
+    });
+  </script>
 </body>
 </html>
