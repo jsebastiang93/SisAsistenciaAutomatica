@@ -24,20 +24,21 @@ class CodigoInput(BaseModel):
 def iniciar_escaner(data: CodigoInput):
     codigo = data.codigo.strip()
 
-    if not codigo:
-        return {"error": "⚠️ Código vacío. Intenta escanear de nuevo."}
+    print(codigo)
+    # if not codigo:
+    #     return {"error": "⚠️ Código vacío. Intenta escanear de nuevo."}
 
-    try:
-        now = datetime.now()
-        fecha_actual = now.date()
+    # try:
+    #     now = datetime.now()
+    #     fecha_actual = now.date()
 
-        # Insertar en la base de datos
-        insert_asistencia(codigo, fecha_actual, now)
+    #     # Insertar en la base de datos
+    #     insert_asistencia(codigo, fecha_actual, now)
 
-        return {
-            "status": "ok",
-            "mensaje": f"✅ Código recibido ({codigo}). Asistencia registrada."
-        }
+    #     return {
+    #         "status": "ok",
+    #         "mensaje": f"✅ Código recibido ({codigo}). Asistencia registrada."
+    #     }
 
-    except Exception as e:
-        return {"error": f"❌ Error al registrar asistencia: {str(e)}"}
+    # except Exception as e:
+    #     return {"error": f"❌ Error al registrar asistencia: {str(e)}"}

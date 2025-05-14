@@ -159,6 +159,37 @@
 
   <!-- Script -->
   <script>
+  
+  function confirmarEnvioDesdeModal() {
+    const codigo = document.getElementById("codigoEscanerModal").value.trim();
+
+    if (codigo === "") {
+      alert("⚠️ Por favor escanee o ingrese un código.");
+      return;
+    }
+
+    fetch("http://localhost:8000/iniciar-escaner", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ codigo }) // Enviando como JSON
+    })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("respuestaEscaneo").innerText =
+          data.mensaje || data.error || "Respuesta inesperada.";
+      })
+      .catch(error => {
+        document.getElementById("respuestaEscaneo").innerText =
+          "❌ Error al conectar con el servidor.";
+        console.error("Error:", error);
+      });
+
+    cerrarModal(); // Asumiendo que esto cierra tu modal
+  }
+
+
     function mostrarModalConfirmacion() {
       document.getElementById("modalConfirmacion").style.display = "flex";
       const input = document.getElementById("codigoEscanerModal");
@@ -170,22 +201,6 @@
       document.getElementById("modalConfirmacion").style.display = "none";
       document.getElementById("codigoEscanerModal").value = "";
     }
-
-    function confirmarEnvioDesdeModal() {
-      const codigo = document.getElementById("codigoEscanerModal").value.trim();
-
-      if (codigo === "") {
-        alert("⚠️ Por favor escanee o ingrese un código.");
-        return;
-      }
-
-      console.log(codigo);
-      
-
-      cerrarModal(); // Asumiendo que esto cierra tu modal
-    }
-
-
     // ⚠️ Prevenir Enter global para que no recargue la página
     document.addEventListener("keydown", function(event) {
       if (event.key === "Enter") {
