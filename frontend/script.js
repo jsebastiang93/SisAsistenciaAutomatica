@@ -7,11 +7,11 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
   
     // Usuario válido (puedes cambiarlo)
     const validEmail = "admin@unicatolica.edu.co";
-    const validPassword = "123456";
+    const validPassword = "1234";
   
     if (email === validEmail && password === validPassword) {
       // Redirigir al dashboard
-      window.location.href = "dashboard.html";
+      window.location.href = "src/pages/dashboard.html";
     } else {
       // Mostrar error
       errorDisplay.textContent = "Correo o contraseña incorrectos.";
