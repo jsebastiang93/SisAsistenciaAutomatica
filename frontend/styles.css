@@ -16,7 +16,7 @@ body {
     display: flex;
     align-items: center;
     padding: 1rem 2rem;
-    max-width: 1200px;
+    max-width: 1350px;
     margin: 0 auto;
   }
   
@@ -93,9 +93,9 @@ body {
   footer {
     background-color: #fff3c4;
     text-align: center;
-    padding: 1rem;
+    padding: 0.1rem;
     font-size: 0.8rem;
-    color: #444;
+    color: #fab720
   }
   .dashboard {
     display: flex;
@@ -249,9 +249,8 @@ body {
   }
   
   .logout-btn {
-    font-size: 1.5rem;
-    text-decoration: none;
-    color: white;
+    width: auto;
+    height: auto;
   }
   .error-message {
     margin-top: 1rem;
