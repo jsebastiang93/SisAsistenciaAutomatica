@@ -1,3 +1,38 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('loginForm');
+  const errorMessage = document.getElementById('loginError');
+
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const user = document.getElementById('email').value;
+      const pass = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('http://localhost:3000/loginUser/getuserLogin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user, pass })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          window.location.href = 'src/pages/dashboard.html';
+        } else {
+          errorMessage.textContent = data.message || 'Credenciales incorrectas';
+        }
+      } catch (error) {
+        console.error('Error en el login:', error);
+        errorMessage.textContent = 'Error al conectar con el servidor';
+      }
+    });
+  }
+});
+
+
+/*
 document.getElementById('loginForm').addEventListener('submit', function (e) {
     e.preventDefault(); // Evita que el formulario se envíe normalmente
   
@@ -18,4 +53,4 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
       errorDisplay.style.color = "red";
     }
   });
-  
+  */
