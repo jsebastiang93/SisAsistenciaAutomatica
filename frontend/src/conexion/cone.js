@@ -8,8 +8,9 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   port: parseInt(process.env.DB_PORT, 10),
   ssl: {
-    rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED,
+    rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'false'
   }
 });
+console.log('DB_PASSWORD:', process.env.DB_PASSWORD); // Debe mostrar una contraseña legible
 
 module.exports = pool;
