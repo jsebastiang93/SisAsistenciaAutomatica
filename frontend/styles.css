@@ -161,7 +161,7 @@ body {
   
   .stat {
     flex: 1 1 220px; /* Ancho flexible y mínimo */
-    border-radius: 10px;
+    border-radius: 0px 15px 0px 15px;
     padding: 1rem;
     display: flex; /* Alineación interna similar al diseño original */
     align-items: center;
@@ -214,6 +214,10 @@ body {
   .class-info {
     margin: 1.5rem 0;
     font-size: 0.95rem;
+    
+  }
+  .class-info p{
+    display: inline-block;
   }
   
   table {
