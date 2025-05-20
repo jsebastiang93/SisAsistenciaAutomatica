@@ -4,7 +4,7 @@ const pool = require('../conexion/cone.js');
 const getPeriodo = async (req, res) => {
     try {
         const response = await pool.query(
-            `SELECT pa.id_periodo_acad,pa.cod_periodo_acad||' - '||pa.descripcion AS descripcion 
+            `SELECT pa.id_periodo_acad, pa.cod_periodo_acad ,pa.cod_periodo_acad||' - '||pa.descripcion AS descripcion 
                 FROM periodo_academico pa WHERE vigencia = TRUE`
         );
 
@@ -36,7 +36,7 @@ const getAsignatura = async (req, res) => {
 
     try {
         const response = await pool.query(
-            `SELECT  ap.id_asig_periodo,a.descripcion, 
+            `SELECT  ap.id_asignatura, a.descripcion, 
                         TO_CHAR(ap.hora_inicio, 'HH12:MI AM') || ' - ' || TO_CHAR(ap.hora_fin, 'HH12:MI AM') AS horario,
                         ap.dia 
                     FROM asignaturas_periodo ap 
@@ -49,7 +49,7 @@ const getAsignatura = async (req, res) => {
         if (response.rows.length > 0) {
             res.status(200).json({
                 status: 200,
-                usuario: response.rows
+                datos: response.rows
             });
         } else {
             res.status(400).json({

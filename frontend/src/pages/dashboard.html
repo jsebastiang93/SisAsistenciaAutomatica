@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Consulta de Asistencia</title>
-  <link rel="stylesheet" href="../../styles.css" />
-  <link rel="stylesheet" href="../../css/dashboard.css" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
 </head>
 <body>
   <!-- Modal -->
@@ -28,7 +28,7 @@
       <img src="../assets/icono-asistencia.svg" alt="Ícono asistencia" class="icono-banner" />
       <span class="titulo-banner">Sistema de asistencia automática</span>
       <div class="user-info">
-        <p>Nazly Rocío<br><span>Periodo 2025-1</span></p>
+        <p id="infoUsuario">Cargando usuario<br><span>Cargando Periodo</span></p>
         <a href="../../index.html">
           <img class="logout-btn" src="../assets/logout-btn.svg" alt="logout-btn">
         </a>
@@ -65,11 +65,12 @@
       <!-- Filtros -->
       <div class="filters">
         <label>Período académico
-          <select><option>2025-1 Primer semestre</option></select>
+          <select id="periodoSelect"><option>Cargando...</option></select>
         </label>
+        
         <label>Asignatura
-          <select id="asignaturaSele">
-            <option value="1">Electiva de Profundización III</option>
+          <select id="asignaturaSelect">
+            <option value="">Seleccione un periodo académico</option>
           </select>
         </label>
         <label>Fecha de clase
@@ -129,7 +130,8 @@
   </footer>
 
   <!-- Script -->
-  <script src="../../js/asistencia.js"></script>
+  <script src="../js/asistencia.js"></script>
+  <script src="../js/dashboard.js"></script>
 
 </body>
 </html>

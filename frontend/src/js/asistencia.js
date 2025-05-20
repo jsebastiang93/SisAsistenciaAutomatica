@@ -1,4 +1,4 @@
-let escaneoManual = false;
+  let escaneoManual = false;
   let ultimaLectura = 0;
 
   function confirmarEnvioDesdeModal() {
