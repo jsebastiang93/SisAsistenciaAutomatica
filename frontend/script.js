@@ -1,38 +1,36 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('loginForm');
+function login() {
+  const user = document.getElementById('email').value;
+  const pass = document.getElementById('password').value;
   const errorMessage = document.getElementById('loginError');
+  const passHash = md5(pass); // Asegúrate de tener la librería md5
 
-  if (form) {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+  fetch('http://localhost:3000/loginUser/getuserLogin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user, pass: passHash })
+  })
+    .then(async response => {
+      const data = await response.json();
 
-      const user = document.getElementById('email').value;
-      const pass = document.getElementById('password').value;
-      const passHash = md5(pass);
-
-      try {
-        const response = await fetch('http://localhost:3000/loginUser/getuserLogin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user, pass: passHash })
-
-        });
-
-        const data = await response.json();
-        console.log('Respuesta del backend:', data);
-
-        if (data.success) {
-          window.location.href = 'src/pages/dashboard.html';
-        } else {
-          errorMessage.textContent = data.message || 'Credenciales incorrectas';
-        }
-      } catch (error) {
-        console.error('Error en el login:', error);
-        errorMessage.textContent = 'Error al conectar con el servidor';
+      if (!response.ok) {
+        // Si fue error de login, muestra el mensaje del backend
+        throw new Error(data.mensaje || 'Credenciales incorrectas');
       }
+
+      return data;
+    })
+    .then(data => {
+      if (data.success) {
+        window.location.href = 'src/pages/dashboard.html';
+      } else {
+        errorMessage.textContent = data.mensaje || 'Credenciales incorrectas';
+      }
+    })
+    .catch(error => {
+      console.error('Error en el login:', error);
+      errorMessage.textContent = error.message || 'Error al conectar con el servidor';
     });
-  }
-});
+}
 
 
 /*
