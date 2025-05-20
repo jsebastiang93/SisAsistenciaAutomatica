@@ -1,6 +1,9 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
+// Convertir 'false' (string) en booleano real
+const useSSL = process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false';
+
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -8,9 +11,8 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   port: parseInt(process.env.DB_PORT, 10),
   ssl: {
-    rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'false'
+    rejectUnauthorized: useSSL
   }
 });
-console.log('DB_PASSWORD:', process.env.DB_PASSWORD); // Debe mostrar una contraseña legible
 
 module.exports = pool;

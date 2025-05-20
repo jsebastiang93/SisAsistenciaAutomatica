@@ -12,11 +12,13 @@ const getValLogin = async (req, res) => {
         // Validar si se encontró algún usuario
         if (response.rows.length > 0) {
             res.status(200).json({
+                success: true,
                 mensaje: 'Usuario válido',
                 usuario: response.rows
             });
         } else {
             res.status(401).json({
+                success: false, 
                 mensaje: 'Usuario o contraseña incorrectos'
             });
         }

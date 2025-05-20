@@ -8,15 +8,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const user = document.getElementById('email').value;
       const pass = document.getElementById('password').value;
+      const passHash = md5(pass);
 
       try {
         const response = await fetch('http://localhost:3000/loginUser/getuserLogin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user, pass })
+          body: JSON.stringify({ user, pass: passHash })
+
         });
 
         const data = await response.json();
+        console.log('Respuesta del backend:', data);
 
         if (data.success) {
           window.location.href = 'src/pages/dashboard.html';
