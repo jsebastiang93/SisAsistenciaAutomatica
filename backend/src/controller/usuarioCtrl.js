@@ -5,7 +5,10 @@ const getValLogin = async (req, res) => {
 
     try {
         const response = await pool.query(
-            `SELECT * FROM usuarios u WHERE vigencia = true AND contrasena = $1 AND usuario = $2`,
+            `SELECT u.*,d.nombre_completo  
+                FROM usuarios u
+                INNER JOIN docentes d ON d.cod_docente = u.cod_docente  
+                WHERE u.vigencia = true AND u.contrasena = $1 AND u.usuario = $2`,
             [pass, user]
         );
 

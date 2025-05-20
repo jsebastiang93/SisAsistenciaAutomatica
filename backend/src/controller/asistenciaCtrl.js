@@ -32,16 +32,18 @@ const getPeriodo = async (req, res) => {
 
 // trae, las asignaturas, asociadas al periodo academico
 const getAsignatura = async (req, res) => {
-    const { id_periodo } = req.body;
+    const { cod_docente } = req.body;
 
     try {
         const response = await pool.query(
-            `SELECT a.descripcion
+            `SELECT  ap.id_asig_periodo,a.descripcion, 
+                        TO_CHAR(ap.hora_inicio, 'HH12:MI AM') || ' - ' || TO_CHAR(ap.hora_fin, 'HH12:MI AM') AS horario,
+                        ap.dia 
                     FROM asignaturas_periodo ap 
                     INNER JOIN asignaturas a ON a.id_asignatura = ap.id_asignatura  
                     INNER JOIN periodo_academico pa ON pa.id_periodo_acad = ap.id_periodo_acad 
-                    WHERE ap.id_periodo_acad = $1`,
-            [id_periodo]
+                    WHERE ap.cod_docente = $1`,
+            [cod_docente]
         );
 
         if (response.rows.length > 0) {
@@ -97,7 +99,7 @@ const getAsistencia = async (req, res) => {
 
 // trae, la asistencia por fecha, y asignatura
 const getInfoDocente = async (req, res) => {
-    const { id_periodo } = req.body;
+    const { cod_docente } = req.body;
 
     try {
         const response = await pool.query(
@@ -106,8 +108,8 @@ const getInfoDocente = async (req, res) => {
                     FROM asignaturas_periodo ap 
                     INNER JOIN asignaturas a ON a.id_asignatura = ap.id_asignatura  
                     INNER JOIN docentes d ON d.cod_docente = ap.cod_docente 
-                    WHERE ap.id_periodo_acad = $1`,
-            [id_periodo]
+                    WHERE ap.cod_docente = $1`,
+            [cod_docente]
         );
 
         if (response.rows.length > 0) {
