@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Consulta de Asistencia</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="../../styles.css" />
   <style>
     .scan-btn {
       background-color: #009688;
@@ -72,11 +72,13 @@
   <!-- Encabezado -->
   <header class="header-banner">
     <div class="banner">
-      <img src="icono-asistencia.png" alt="Ícono asistencia" class="icono-banner" />
+      <img src="../assets/icono-asistencia.svg" alt="Ícono asistencia" class="icono-banner" />
       <span class="titulo-banner">Sistema de asistencia automática</span>
       <div class="user-info">
         <p>Nazly Rocío<br><span>Periodo 2025-1</span></p>
-        <a href="index.html" class="logout-btn">⤴</a>
+        <a href="../../index.html">
+          <img class="logout-btn" src="../assets/logout-btn.svg" alt="logout-btn">
+        </a>
       </div>
     </div>
   </header>
@@ -122,11 +124,23 @@
       </div>
 
       <div class="stats">
-        <div class="stat yellow"><strong>13</strong><br>Estudiantes Matriculados</div>
-        <div class="stat green"><strong>8</strong><br>Asistencias</div>
-        <div class="stat red"><strong>5</strong><br>Inasistencias</div>
-        <div class="stat blue"><strong>0</strong><br>Excusas por inasistencia</div>
-      </div>
+        <div class="stat yellow">
+          <span class="numero">13</span>
+          <span class="texto">Estudiantes Matriculados</span>
+        </div>
+        <div class="stat green">
+          <span class="numero">8</span>
+          <span class="texto">Asistencias</span>
+        </div>
+        <div class="stat red">
+          <span class="numero">5</span>
+          <span class="texto">Inasistencias</span>
+        </div>
+        <div class="stat blue">
+          <span class="numero">0</span>
+          <span class="texto">Excusas por Inasistencia</span>
+        </div>
+      </div>      
 
       <div class="class-info">
         <p><strong>Docente:</strong> Nazly Rocío Hincapié Monsalve</p>
@@ -139,13 +153,15 @@
           <tr>
             <th>Nombre del Estudiante</th>
             <th>Hora de registro</th>
+            <th>Estado</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>397507 Wilson David Menza Pavi</td>
-            <td>06:35 pm - Asistió</td>
+            <td>06:35 pm</td>
+            <td>ASISTIÓ</td>
             <td><a href="#">Adicionar excusa</a></td>
           </tr>
         </tbody>
@@ -154,11 +170,42 @@
   </div>
 
   <footer>
-    <p>Copyright © 2025 - Unicatólica | Versión 0.0.1</p>
+    <p>Copyright © 2025 - Unicatólica | Versión 0.0.1 | Todos los derechos reservados</p>
   </footer>
 
   <!-- Script -->
   <script>
+  
+  function confirmarEnvioDesdeModal() {
+    const codigo = document.getElementById("codigoEscanerModal").value.trim();
+
+    if (codigo === "") {
+      alert("⚠️ Por favor escanee o ingrese un código.");
+      return;
+    }
+
+    fetch("http://localhost:8000/iniciar-escaner", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ codigo }) // Enviando como JSON
+    })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("respuestaEscaneo").innerText =
+          data.mensaje || data.error || "Respuesta inesperada.";
+      })
+      .catch(error => {
+        document.getElementById("respuestaEscaneo").innerText =
+          "❌ Error al conectar con el servidor.";
+        console.error("Error:", error);
+      });
+
+    cerrarModal(); // Asumiendo que esto cierra tu modal
+  }
+
+
     function mostrarModalConfirmacion() {
       document.getElementById("modalConfirmacion").style.display = "flex";
       const input = document.getElementById("codigoEscanerModal");
@@ -170,22 +217,6 @@
       document.getElementById("modalConfirmacion").style.display = "none";
       document.getElementById("codigoEscanerModal").value = "";
     }
-
-    function confirmarEnvioDesdeModal() {
-      const codigo = document.getElementById("codigoEscanerModal").value.trim();
-
-      if (codigo === "") {
-        alert("⚠️ Por favor escanee o ingrese un código.");
-        return;
-      }
-
-      console.log(codigo);
-      
-
-      cerrarModal(); // Asumiendo que esto cierra tu modal
-    }
-
-
     // ⚠️ Prevenir Enter global para que no recargue la página
     document.addEventListener("keydown", function(event) {
       if (event.key === "Enter") {

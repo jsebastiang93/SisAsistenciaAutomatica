@@ -1,16 +1,24 @@
 const express = require('express');
-
-const routerAsistencia = require('./router/asistencia');
+const cors = require('cors');
+const rotuerLogin = require('./router/usuario.route');
+const rotuerInfoMateria = require('./router/asignatura.route');
 
 
 const app = express();
+app.use(cors());
 
 // middlewares
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
 // Routes
-app.use('/asistencia', routerAsistencia);
-app.listen(3000);
 
-console.log('Server on port', 3000);
+app.use('/loginUser', rotuerLogin);
+
+app.use('/infoMateria', rotuerInfoMateria);
+
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});

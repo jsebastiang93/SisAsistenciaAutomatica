@@ -16,7 +16,7 @@ body {
     display: flex;
     align-items: center;
     padding: 1rem 2rem;
-    max-width: 1200px;
+    max-width: 1350px;
     margin: 0 auto;
   }
   
@@ -93,9 +93,9 @@ body {
   footer {
     background-color: #fff3c4;
     text-align: center;
-    padding: 1rem;
+    padding: 0.1rem;
     font-size: 0.8rem;
-    color: #444;
+    color: #fab720
   }
   .dashboard {
     display: flex;
@@ -156,40 +156,68 @@ body {
     display: flex;
     gap: 1rem;
     margin-top: 1rem;
+    flex-wrap: wrap; /* Para mejor adaptabilidad */
   }
   
   .stat {
-    flex: 1;
-    border-radius: 10px;
+    flex: 1 1 220px; /* Ancho flexible y mínimo */
+    border-radius: 0px 15px 0px 15px;
     padding: 1rem;
-    text-align: center;
+    display: flex; /* Alineación interna similar al diseño original */
+    align-items: center;
+    gap: 0.75rem;
     font-weight: bold;
-    font-size: 1rem;
+    text-align: left;
   }
   
+  .stat .numero {
+    font-size: 48px;
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  .stat .texto {
+    display: inline-block;
+    font-size: 20px;
+    vertical-align: middle;
+    line-height: 1.2;
+    font-weight: bold;
+  }
+  
+  /* Colores personalizados */
   .stat.yellow {
     border: 3px solid #fcbf17;
     background: #fff8e1;
+    color: #e0a80f;
   }
   
   .stat.green {
     border: 3px solid #4caf50;
     background: #e8f5e9;
+    color: #4caf50;
   }
   
   .stat.red {
     border: 3px solid #f44336;
     background: #ffebee;
+    color: #f44336;
   }
   
   .stat.blue {
     border: 3px solid #2196f3;
     background: #e3f2fd;
+    color: #2196f3;
   }
+  
   
   .class-info {
     margin: 1.5rem 0;
     font-size: 0.95rem;
+    
+  }
+  .class-info p{
+    display: inline-block;
   }
   
   table {
@@ -225,9 +253,8 @@ body {
   }
   
   .logout-btn {
-    font-size: 1.5rem;
-    text-decoration: none;
-    color: white;
+    width: auto;
+    height: auto;
   }
   .error-message {
     margin-top: 1rem;
