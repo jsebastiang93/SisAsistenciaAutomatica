@@ -1,8 +1,10 @@
 const { Router } = require('express');
-const routerCliente = Router();
+const routerUsuario = Router();
 
-const { getValLogin } = require('../controller/usuarioCtrl.js');
+const { getValLogin, setAsistencia } = require('../controller/usuarioCtrl.js');
 
-routerCliente.post('/getuserLogin', getValLogin  );
+routerUsuario.post('/getuserLogin', getValLogin  );
 
-module.exports = routerCliente;
+routerUsuario.post('/setAsistencia', setAsistencia  );
+
+module.exports = routerUsuario;

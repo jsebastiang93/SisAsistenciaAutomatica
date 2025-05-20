@@ -5,54 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Consulta de Asistencia</title>
   <link rel="stylesheet" href="../../styles.css" />
-  <style>
-    .scan-btn {
-      background-color: #009688;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      font-size: 14px;
-      cursor: pointer;
-      border-radius: 4px;
-      margin-right: 10px;
-    }
-    .scan-btn:hover {
-      background-color: #00796b;
-    }
-    .scan-btn.stop {
-      background-color: #b71c1c;
-    }
-    .scan-btn.stop:hover {
-      background-color: #8e0000;
-    }
-    #respuestaEscaneo {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    #modalConfirmacion {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    #modalConfirmacion .modal-content {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-      max-width: 400px;
-    }
-    #codigoEscanerModal {
-      padding: 10px;
-      width: 90%;
-      font-size: 16px;
-      margin-top: 10px;
-    }
-  </style>
+  <link rel="stylesheet" href="../../css/dashboard.css" />
 </head>
 <body>
   <!-- Modal -->
@@ -62,7 +15,7 @@
       <form onsubmit="event.preventDefault(); confirmarEnvioDesdeModal();">
         <input type="text" id="codigoEscanerModal" placeholder="Escanea aquí..." autocomplete="off" />
         <div style="margin-top: 20px;">
-          <button type="submit" class="scan-btn">Aceptar</button>
+          <button type="button" onclick="tomaAsistencia()" class="scan-btn">Aceptar</button>
           <button type="button" onclick="cerrarModal()" class="scan-btn stop">Cancelar</button>
         </div>
       </form>
@@ -115,7 +68,9 @@
           <select><option>2025-1 Primer semestre</option></select>
         </label>
         <label>Asignatura
-          <select><option>Electiva de Profundización III</option></select>
+          <select id="asignaturaSele">
+            <option value="1">Electiva de Profundización III</option>
+          </select>
         </label>
         <label>Fecha de clase
           <input type="date" value="2025-04-29" />
@@ -174,97 +129,7 @@
   </footer>
 
   <!-- Script -->
-  <script>
-  let escaneoManual = false;
-  let ultimaLectura = 0;
-
-  function confirmarEnvioDesdeModal() {
-    const codigo = document.getElementById("codigoEscanerModal").value.trim();
-
-    if (codigo === "") {
-      alert("⚠️ Por favor escanee o ingrese un código.");
-      return;
-    }
-
-    fetch("http://localhost:8000/iniciar-escaner", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ codigo })
-    })
-    .then(response => response.json())
-    .then(data => {
-      document.getElementById("respuestaEscaneo").innerText =
-        data.mensaje || data.error || "Respuesta inesperada.";
-    })
-    .catch(error => {
-      document.getElementById("respuestaEscaneo").innerText =
-        "❌ Error al conectar con el servidor.";
-      console.error("Error:", error);
-    });
-
-    cerrarModal();
-  }
-
-  function mostrarModalConfirmacion() {
-    const modal = document.getElementById("modalConfirmacion");
-    const input = document.getElementById("codigoEscanerModal");
-    modal.style.display = "flex";
-    input.value = "";
-    input.focus();
-    escaneoManual = false; // ← Reiniciar al mostrar el modal
-  }
-
-  function cerrarModal() {
-    document.getElementById("modalConfirmacion").style.display = "none";
-    document.getElementById("codigoEscanerModal").value = "";
-    escaneoManual = false;
-  }
-
-  // Marcar si el usuario enfocó el input manualmente
-  const inputCodigo = document.getElementById("codigoEscanerModal");
-
-  inputCodigo.addEventListener("focus", () => {
-    escaneoManual = true;
-  });
-
-  inputCodigo.addEventListener("blur", () => {
-    escaneoManual = false;
-  });
-
-  // Capturar Enter con lógica de control
-  inputCodigo.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-      const ahora = Date.now();
-      
-      // ⚠️ Prevenir si fue Enter automático (rápido tras escaneo)
-      if (!escaneoManual || ahora - ultimaLectura < 300) {
-        event.preventDefault();
-        return;
-      }
-
-      ultimaLectura = ahora;
-      confirmarEnvioDesdeModal();
-    }
-  });
-
-  // Evitar Enter global cuando no corresponde
-  document.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-      const modal = document.getElementById("modalConfirmacion");
-      const input = document.getElementById("codigoEscanerModal");
-
-      // Si no estamos dentro del modal o el input no está enfocado, prevenir
-      if (modal.style.display === "flex" && document.activeElement !== input) {
-        event.preventDefault();
-      }
-      if (modal.style.display !== "flex") {
-        event.preventDefault();
-      }
-    }
-  });
-</script>
+  <script src="../../js/asistencia.js"></script>
 
 </body>
 </html>

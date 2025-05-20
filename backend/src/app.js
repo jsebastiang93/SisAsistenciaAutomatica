@@ -18,6 +18,9 @@ app.use('/loginUser', rotuerLogin);
 app.use('/infoMateria', rotuerInfoMateria);
 
 
+app.use('/registroCod', rotuerLogin);
+
+
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
