@@ -79,7 +79,7 @@ function cargarAsignaturas() {
         }
   
         const asignaturaSelect = document.getElementById('asignaturaSelect');
-        asignaturaSelect.innerHTML = ''; // Limpiar opciones anteriores
+        asignaturaSelect.innerHTML = ' <option value="">Seleccione un periodo académico</option>'; // Limpiar opciones anteriores
   
         data.datos.forEach(asignatura => {
           const option = document.createElement('option');
@@ -104,7 +104,49 @@ function actualizarInfoUsuario() {
       infoP.innerHTML = `${nombreCompleto}<br><span>${codigoPeriodo}</span>`;
     }
   }
-  
+  function buscar(){
+  let asignatura = document.getElementById('asignaturaSelect').value;
+  let fecha = document.getElementById('fechaClase').value;
+
+  console.log("periodo: ",fecha);
+
+   if (!asignatura || !fecha) {
+    alert("Por favor selecciona una asignatura y una fecha.");
+    return;
+  }
+
+
+  fetch('http://localhost:3000/infoMateria/getAsistencia', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        asignatura,
+        fecha })
+  })
+    .then(async response => {
+      const data = await response.json();
+      const tbody = document.getElementById('tablaAsistencia');
+      tbody.innerHTML = ''; // Limpiar antes de insertar
+
+      data.usuario.forEach(asistencia => {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td>${asistencia.nombre_completo}</td>
+          <td>${asistencia.hora_asistencia}</td>
+          <td>${asistencia.descripcion}</td>
+        `;
+        tbody.appendChild(fila);
+      });
+    })
+    .catch(error => {
+      console.error('Error en el login:', error);
+      errorMessage.textContent = error.message || 'Error al conectar con el servidor';
+    });
+
+
+  }
+ 
+
 // Función para cargar la información de las Cards del dashboard
   
 

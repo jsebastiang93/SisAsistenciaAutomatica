@@ -74,9 +74,9 @@
           </select>
         </label>
         <label>Fecha de clase
-          <input type="date" value="2025-04-29" />
+      <input type="date" id="fechaClase" />
         </label>
-        <button class="search-btn">🔍</button>
+       <button class="search-btn" onclick="buscar()">🔍</button>
       </div>
 
       <div class="stats">
@@ -113,13 +113,7 @@
             <th></th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>397507 Wilson David Menza Pavi</td>
-            <td>06:35 pm</td>
-            <td>ASISTIÓ</td>
-            <td><a href="#">Adicionar excusa</a></td>
-          </tr>
+        <tbody id="tablaAsistencia">
         </tbody>
       </table>
     </main>
