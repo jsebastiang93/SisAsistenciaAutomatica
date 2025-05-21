@@ -94,8 +94,8 @@ function cargarAsignaturas() {
       });
   }
   
-
-  function actualizarInfoUsuario() {
+// Función para cargar la información del Usuario
+function actualizarInfoUsuario() {
     const nombreCompleto = localStorage.getItem('nombre_completo') || 'Usuario';
     const codigoPeriodo = localStorage.getItem('cod_periodo_acad') || 'Periodo no definido';
   
@@ -105,10 +105,11 @@ function cargarAsignaturas() {
     }
   }
   
+// Función para cargar la información de las Cards del dashboard
   
 
-  // Inicializar el dashboard
-  document.addEventListener('DOMContentLoaded', () => {
+// Inicializar el dashboard
+document.addEventListener('DOMContentLoaded', () => {
     cargarPeriodos();
     cargarAsignaturas();
     actualizarInfoUsuario();
