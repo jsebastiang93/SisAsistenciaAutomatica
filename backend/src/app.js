@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const rotuerLogin = require('./router/usuario.route');
 const rotuerInfoMateria = require('./router/asignatura.route');
+const routerExcusa = require('./router/excusa.route.js');
 
 
 const app = express();
@@ -17,8 +18,9 @@ app.use('/loginUser', rotuerLogin);
 
 app.use('/infoMateria', rotuerInfoMateria);
 
-
 app.use('/registroCod', rotuerLogin);
+
+app.use('/infoExcusas', routerExcusa);
 
 
 const PORT = 3000;

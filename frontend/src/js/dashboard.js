@@ -104,7 +104,9 @@ function actualizarInfoUsuario() {
       infoP.innerHTML = `${nombreCompleto}<br><span>${codigoPeriodo}</span>`;
     }
   }
-  function buscar(){
+
+// Función para listar las asistencias
+function buscar(){
   let asignatura = document.getElementById('asignaturaSelect').value;
   let fecha = document.getElementById('fechaClase').value;
 
