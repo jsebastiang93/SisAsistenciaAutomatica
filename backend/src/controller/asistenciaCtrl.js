@@ -69,7 +69,7 @@ const getAsistencia = async (req, res) => {
 
     try {
         const response = await pool.query(
-            `SELECT a.id_asistencia,e.nombre_completo, a.hora_asistencia,ea.descripcion 
+            `SELECT a.id_asistencia, e.cod_estudiante, e.nombre_completo, a.hora_asistencia,ea.descripcion 
                     FROM  asistencias a 
                     INNER JOIN estudiantes e ON e.cod_estudiante = a.cod_estudiante 
                     INNER JOIN estados_asistencia ea ON ea.id_estados_asis = a.id_estado_asis 

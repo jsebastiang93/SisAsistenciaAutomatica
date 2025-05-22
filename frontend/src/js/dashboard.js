@@ -50,6 +50,7 @@ function cargarAsignaturas() {
     console.log('Iniciando solicitud a la API getAsignatura...');
     
     const codDocente = localStorage.getItem('cod_docente');
+    const nombreDocente = localStorage.getItem('nombre_completo');
     console.log('Código del docente:', codDocente);
   
     // Verificar si el cod_docente existe
@@ -80,19 +81,41 @@ function cargarAsignaturas() {
   
         const asignaturaSelect = document.getElementById('asignaturaSelect');
         asignaturaSelect.innerHTML = ' <option value="">Seleccione un periodo académico</option>'; // Limpiar opciones anteriores
-  
-        data.datos.forEach(asignatura => {
-          const option = document.createElement('option');
-          option.value = asignatura.id_asignatura;
-          option.textContent = asignatura.descripcion;
-          asignaturaSelect.appendChild(option);
-        });
-      })
-      .catch(error => {
-        console.error('Error al cargar asignaturas:', error.message);
-        document.getElementById('asignaturaSelect').innerHTML = `<option value="">${error.message || 'Error al cargar asignaturas'}</option>`;
-      });
-  }
+        data.datos.forEach((asignatura, index) => {
+            const option = document.createElement('option');
+            option.value = asignatura.id_asignatura;
+            option.setAttribute('data-index', index); // Guardamos el índice del array
+            option.textContent = asignatura.descripcion;
+            asignaturaSelect.appendChild(option);
+          });
+
+        // Listener para actualizar el div
+        asignaturaSelect.addEventListener('change', (e) => {
+            const selectedOption = e.target.selectedOptions[0];
+            const index = selectedOption.getAttribute('data-index');
+          
+            if (index === null) {
+              document.getElementById('nrc').textContent = '-';
+              document.getElementById('docente').textContent = '-';
+              document.getElementById('dia').textContent = '-';
+              document.getElementById('horario').textContent = '-';
+              return;
+            }
+          
+            const selectedAsignatura = data.datos[index];
+          
+            document.getElementById('nrc').textContent = selectedAsignatura.nrc;
+            document.getElementById('docente').textContent = nombreDocente;
+            document.getElementById('dia').textContent = selectedAsignatura.dia;
+            document.getElementById('horario').textContent = selectedAsignatura.horario;
+          });
+          
+    })
+    .catch(error => {
+      console.error('Error al cargar asignaturas:', error.message);
+      document.getElementById('asignaturaSelect').innerHTML = `<option value="">${error.message || 'Error al cargar asignaturas'}</option>`;
+    });
+}
   
 // Función para cargar la información del Usuario
 function actualizarInfoUsuario() {
@@ -105,7 +128,7 @@ function actualizarInfoUsuario() {
     }
   }
 
-// Función para listar las asistencias
+// Función para buscar info básica de la clase y listar las asistencias según la fecha
 function buscar(){
   let asignatura = document.getElementById('asignaturaSelect').value;
   let fecha = document.getElementById('fechaClase').value;
@@ -117,29 +140,37 @@ function buscar(){
     return;
   }
 
-
   fetch('http://localhost:3000/infoMateria/getAsistencia', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        asignatura,
-        fecha })
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    asignatura,
+    fecha
   })
-    .then(async response => {
-      const data = await response.json();
-      const tbody = document.getElementById('tablaAsistencia');
-      tbody.innerHTML = ''; // Limpiar antes de insertar
+})
+  .then(async response => {
+    const data = await response.json();
+    const tbody = document.getElementById('tablaAsistencia');
+    tbody.innerHTML = ''; // Limpiar antes de insertar
 
+    if (!data.usuario || data.usuario.length === 0) {
+      const fila = document.createElement('tr');
+      fila.innerHTML = `
+        <td colspan="3" style="text-align:center;">Aún no se ha registrado la asistencia</td>
+      `;
+      tbody.appendChild(fila);
+    } else {
       data.usuario.forEach(asistencia => {
         const fila = document.createElement('tr');
         fila.innerHTML = `
-          <td>${asistencia.nombre_completo}</td>
+          <td>${asistencia.cod_estudiante} ${asistencia.nombre_completo}</td>
           <td>${asistencia.hora_asistencia}</td>
           <td>${asistencia.descripcion}</td>
         `;
         tbody.appendChild(fila);
       });
-    })
+    }
+  })
     .catch(error => {
       console.error('Error en el login:', error);
       errorMessage.textContent = error.message || 'Error al conectar con el servidor';
