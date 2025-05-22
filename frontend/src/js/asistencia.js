@@ -95,11 +95,13 @@ function tomaAsistencia() {
   let fecha_sistema = new Date();
 
   let fecha = new Date().toISOString().split('T')[0];
-console.log(fecha); // Ejemplo: "2025-05-20"
-  let hora = fecha_sistema.toLocaleTimeString();  // e.g. "14:37:22"
+  console.log(fecha); // Ejemplo: "2025-05-20"
+  //let hora = fecha_sistema.toLocaleTimeString();  // e.g. "14:37:22"
+  let hora = fecha_sistema.toTimeString().split(' ')[0];  // e.g. "14:37:22"
+  console.log(hora); // Ejemplo: "14:37:22"
 
   let documento = document.getElementById("codigoEscanerModal").value;
-  let asignatura = document.getElementById("asignaturaSele").value;
+  let asignatura = document.getElementById("asignaturaSelect").value;
 
   
   fetch('http://localhost:3000/registroCod/setAsistencia', {
